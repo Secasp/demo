@@ -1,0 +1,49 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET`}}"
+  },
+
+  "builders":
+  [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-east-1",
+    "source_ami": "ami-0ac019f4fcb7cb7e6",
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "kafka_ami_last"
+  }],
+
+
+  "provisioners":
+  [
+    {
+      "destination": "/home/ubuntu/",
+      "source": "scripts/provisioning.sh",
+      "type": "file"
+    },
+
+    {
+    "type": "shell",
+    "inline": [
+      "sleep 15",
+      "sudo apt -y update",
+      "sudo apt install -y wget ca-certificates zip net-tools vim tar netcat",
+      "sudo apt install -y default-jdk",
+      "wget https://www-us.apache.org/dist/kafka/2.1.0/kafka_2.11-2.1.0.tgz",
+      "wget https://www-us.apache.org/dist/zookeeper/stable/zookeeper-3.4.12.tar.gz",
+      "tar -zxf kafka_2.11-2.1.0.tgz",
+      "tar -zxf zookeeper-3.4.12.tar.gz",
+      "rm -rf kafka_2.11-2.1.0.tgz",
+      "rm -rf zookeeper-3.4.12.tar.gz",
+      "sudo mv kafka_2.11-2.1.0 /var/kafka",
+      "sudo mv zookeeper-3.4.12 /var/zookeeper",
+      "rm -rf kafka_2.11-2.1.0 zookeeper-3.4.12",
+      "sudo bash -x /home/ubuntu/provisioning.sh"
+
+      ]
+    }
+  ]
+}

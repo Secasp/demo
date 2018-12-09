@@ -1,0 +1,10 @@
+# Terraform
+terraform/*plan*
+terraform/.terraform
+terraform/*tfstate*
+terraform/*destroy*
+
+#Environment
+.env
+terraform/.env
+packer/.env
